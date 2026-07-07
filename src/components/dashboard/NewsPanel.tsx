@@ -32,7 +32,7 @@ export function NewsPanel({ articles, onIngest, isIngesting, usedMockData }: New
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const categories = ['all', ...new Set(articles.map((a) => a.classifiedCategory).filter(Boolean))];
+  const categories = ['all', ...Array.from(new Set(articles.map((a) => a.classifiedCategory).filter(Boolean)))];
 
   const filtered = selectedCategory === 'all'
     ? articles
