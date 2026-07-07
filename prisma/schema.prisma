@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model Supplier {
+  id                 String              @id @default(cuid())
+  name               String
+  tier               Int                 // 1 = assembly/OEM, 2 = components, 3 = raw materials
+  lat                Float
+  lng                Float
+  country            String
+  region             String
+  categoryExposure   String              // JSON array of risk categories
+  upstreamIds        String              @default("[]") // JSON array of supplier IDs
+  downstreamIds      String              @default("[]") // JSON array of supplier IDs
+  currentRiskScore   Float               @default(0)
+  currentImpactScore Float               @default(0)
+  description        String              @default("")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  riskEvents         RiskEvent[]
+  mitigations        MitigationStrategy[]
+}
+
+model NewsArticle {
+  id                   String      @id @default(cuid())
+  title                String
+  url                  String      @default("")
+  publishedAt          DateTime
+  source               String
+  rawContent           String
+  classifiedCategory   String      @default("")
+  affectedGeography    String      @default("")
+  affectedCompany      String      @default("")
+  severity             Int         @default(5)
+  processed            Boolean     @default(false)
+  createdAt            DateTime    @default(now())
+  riskEvents           RiskEvent[]
+}
+
+model RiskEvent {
+  id                    String              @id @default(cuid())
+  supplierId            String
+  newsArticleId         String?
+  disruptionProbability Float
+  impactScore           Float
+  reasoning             String
+  createdAt             DateTime            @default(now())
+  supplier              Supplier            @relation(fields: [supplierId], references: [id])
+  newsArticle           NewsArticle?        @relation(fields: [newsArticleId], references: [id])
+  mitigations           MitigationStrategy[]
+}
+
+model MitigationStrategy {
+  id                   String     @id @default(cuid())
+  supplierId           String
+  riskEventId          String?
+  alternateSuppliers   String     // JSON
+  inventoryAdjustment  String     // JSON
+  logisticsRerouting   String     // JSON
+  summary              String     @default("")
+  createdAt            DateTime   @default(now())
+  supplier             Supplier   @relation(fields: [supplierId], references: [id])
+  riskEvent            RiskEvent? @relation(fields: [riskEventId], references: [id])
+}
+
+model SimulationRun {
+  id             String   @id @default(cuid())
+  scenarioName   String
+  scenarioParams String   // JSON
+  results        String   // JSON
+  responseTimeMs Int
+  createdAt      DateTime @default(now())
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("analyst") // analyst | admin
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
