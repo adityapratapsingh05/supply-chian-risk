@@ -357,6 +357,7 @@ export const MOCK_SIMULATION_RUNS: SimulationRun[] = [
       cascadePath: ['sup_002', 'sup_004', 'sup_005'],
       totalImpact: 9.2,
       briefingSummary: 'A Taiwan Strait closure would trigger a cascading disruption across 3 supplier tiers, halting final assembly and causing estimated 6-8 week delivery delays to global markets.',
+      mitigations: [],
       responseTimeMs: 2341,
     },
     responseTimeMs: 2341,
