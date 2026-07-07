@@ -121,10 +121,10 @@ export default function SupplyChainGraph({
   const positions = useMemo(() => computeLayout(suppliers), [suppliers]);
 
   // Build initial arrays — used only on first mount and when supplier list changes
-  const [nodes, setNodes, onNodesChange] = useNodesState(() =>
+  const [nodes, setNodes, onNodesChange] = useNodesState(
     buildNodes(suppliers, positions, cascadePath, onNodeClick, isAdmin)
   );
-  const [edges, setEdges, onEdgesChange] = useEdgesState(() =>
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
     buildEdges(suppliers, cascadePath)
   );
 
